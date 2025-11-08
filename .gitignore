@@ -1,0 +1,22 @@
+/build/
+/dist/
+/Output/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+
+# Virtual environment
+.venv/
+
+# IDE
+.idea/
+
+# OAuth credentials (bundled with app at build time)
+drifter_scanner/auth/credentials.json
+
+# User tokens (stored in user's home directory, not in repo)
+token.json

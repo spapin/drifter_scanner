@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "drifter-scanner"
+version = "0.1.0"
+description = "Scans wormholes for WCBR"
+requires-python = ">=3.12"
+dependencies = [
+    "pystray",
+    "Pillow",
+    "reactivex",
+    "gspread",
+    "google-auth-oauthlib",
+    "google-auth-httplib2",
+    "requests",
+]
+
+[project.scripts]
+drifter-scanner = "drifter_scanner"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["drifter_scanner*"]
+
+[tool.setuptools.package-data]
+drifter_scanner = ["resources/*"]

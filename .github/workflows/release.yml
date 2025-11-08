@@ -1,0 +1,54 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install pyinstaller
+
+      - name: Build executable with PyInstaller
+        run: pyinstaller drifter-scanner.spec
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y --no-progress
+
+      - name: Update installer version from tag
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i "s/^AppVersion=.*/AppVersion=$VERSION/" installer.iss
+
+      - name: Build installer
+        run: iscc installer.iss
+
+      - name: Rename portable executable
+        shell: bash
+        run: cp dist/drifter-scanner.exe dist/drifter-scanner-portable.exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Output/DrifterScannerSetup.exe
+            dist/drifter-scanner-portable.exe
+          generate_release_notes: true
