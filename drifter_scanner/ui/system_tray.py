@@ -1,6 +1,7 @@
 """
 System tray menu management.
 """
+import sys
 from pathlib import Path
 from PIL import Image
 import pystray
@@ -11,10 +12,11 @@ class SystemTray:
 
     def __init__(self, app_state):
         self.app_state = app_state
+        self.icon = None
 
     def get_icon_path(self):
         """Get the path to the icon file."""
-        module_dir = Path(__file__).parent
+        module_dir = Path(__file__).parent.parent
         icon_path = module_dir / "resources" / "WCBR_logo.png"
 
         if not icon_path.exists():
@@ -30,6 +32,7 @@ class SystemTray:
     def on_quit(self, icon, item):
         """Handle quit action."""
         self.app_state.shutdown()
+        icon.stop()
 
     def create_menu(self):
         """Create the system tray menu."""
@@ -37,13 +40,18 @@ class SystemTray:
             pystray.MenuItem("Quit", self.on_quit)
         )
 
+    def stop(self):
+        """Stop the system tray."""
+        if self.icon:
+            self.icon.stop()
+
     def run(self):
-        """Run the system tray (blocking call)."""
+        """Run the system tray."""
         icon_image = self.load_icon_image()
-        icon = pystray.Icon(
+        self.icon = pystray.Icon(
             "drifter_scanner",
             icon_image,
             "Drifter Scanner",
             menu=self.create_menu()
         )
-        icon.run()
+        self.icon.run()
