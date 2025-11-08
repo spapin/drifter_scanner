@@ -1,0 +1,14 @@
+/build/
+/dist/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# OAuth credentials (bundled with app at build time)
+drifter_scanner/auth/credentials.json
+
+# User tokens (stored in user's home directory, not in repo)
+token.json
