@@ -66,7 +66,8 @@ class DrifterScanner:
         tray_thread.start()
 
         try:
-            tray_thread.join()
+            while tray_thread.is_alive():
+                tray_thread.join(timeout=1.0)
         except KeyboardInterrupt:
             print("\nCtrl+C detected", file=sys.stderr)
             self.tray.stop()

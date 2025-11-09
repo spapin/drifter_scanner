@@ -23,7 +23,7 @@ def detect_drifter_connections():
 
         prev, curr = pair
 
-        if prev.character_id != curr.character_id or prev.system == curr.system:
+        if prev.system == curr.system:
             return []
 
         prev_is_drifter = prev.system in DRIFTER_WORMHOLES
@@ -40,6 +40,9 @@ def detect_drifter_connections():
         return []
 
     return ops.compose(
-        ops.buffer_with_count(2, 1),
-        ops.flat_map(detect_connection)
+        ops.group_by(lambda jump: jump.character_id),
+        ops.flat_map(lambda group: group.pipe(
+            ops.buffer_with_count(2, 1),
+            ops.flat_map(detect_connection)
+        ))
     )
