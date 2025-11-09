@@ -2,17 +2,24 @@
 System tray menu management.
 """
 import sys
+import threading
 from pathlib import Path
 from PIL import Image
 import pystray
+
+from drifter_scanner.ui.logs_window import LogsWindow
 
 
 class SystemTray:
     """Manages the system tray icon and menu."""
 
-    def __init__(self, app_state):
+    def __init__(self, app_state, log_buffer=None):
         self.app_state = app_state
+        self.log_buffer = log_buffer
         self.icon = None
+        self.logs_window = None
+        if log_buffer:
+            self.logs_window = LogsWindow(log_buffer)
 
     def get_icon_path(self):
         """Get the path to the icon file."""
@@ -29,6 +36,11 @@ class SystemTray:
         icon_path = self.get_icon_path()
         return Image.open(icon_path)
 
+    def on_logs(self, icon, item):
+        """Handle logs action."""
+        if self.logs_window:
+            threading.Thread(target=self.logs_window.show, daemon=True).start()
+
     def on_quit(self, icon, item):
         """Handle quit action."""
         self.app_state.shutdown()
@@ -36,9 +48,11 @@ class SystemTray:
 
     def create_menu(self):
         """Create the system tray menu."""
-        return pystray.Menu(
-            pystray.MenuItem("Quit", self.on_quit)
-        )
+        menu_items = []
+        if self.log_buffer:
+            menu_items.append(pystray.MenuItem("Logs", self.on_logs))
+        menu_items.append(pystray.MenuItem("Quit", self.on_quit))
+        return pystray.Menu(*menu_items)
 
     def stop(self):
         """Stop the system tray."""

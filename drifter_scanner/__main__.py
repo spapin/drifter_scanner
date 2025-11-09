@@ -14,6 +14,7 @@ from drifter_scanner.consumers.logger import StderrLogger
 from drifter_scanner.consumers.spreadsheet_writer import SpreadsheetWriter
 from drifter_scanner.auth.google_auth import GoogleSheetsAuth
 from drifter_scanner.ui.system_tray import SystemTray
+from drifter_scanner.ui.log_buffer import LogBuffer
 from drifter_scanner.operators.drifter_connections import detect_drifter_connections
 
 
@@ -25,6 +26,8 @@ class DrifterScanner:
         self.jump_events = JumpEvents()
         self.scheduler = None
         self.tray = None
+        self.log_buffer = LogBuffer()
+        self.log_buffer.install()
 
     def _start_workers(self):
         """Start all background workers."""
@@ -55,13 +58,14 @@ class DrifterScanner:
         self.state.shutdown()
         if self.scheduler:
             self.scheduler.dispose()
+        self.log_buffer.uninstall()
 
     def run(self):
         """Run the application."""
         self.state.start()
         self._start_workers()
 
-        self.tray = SystemTray(self.state)
+        self.tray = SystemTray(self.state, self.log_buffer)
         tray_thread = threading.Thread(target=self.tray.run, daemon=False)
         tray_thread.start()
 
