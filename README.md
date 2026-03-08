@@ -47,6 +47,17 @@ iscc installer.iss
 
 The installer will be output to the `Output/` directory.
 
+## Releasing
+
+Pushing a version tag triggers GitHub Actions to build the executable, package the installer, and create a release:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The release will include both `DrifterScannerSetup.exe` (installer) and `drifter-scanner-portable.exe`.
+
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
