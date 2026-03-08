@@ -16,15 +16,17 @@ class LogBuffer:
 
     def write(self, text):
         """Write to buffer and original stderr."""
-        self.original_stderr.write(text)
-        self.original_stderr.flush()
+        if self.original_stderr is not None:
+            self.original_stderr.write(text)
+            self.original_stderr.flush()
 
         with self.lock:
             self.buffer.append(text)
 
     def flush(self):
         """Flush the original stderr."""
-        self.original_stderr.flush()
+        if self.original_stderr is not None:
+            self.original_stderr.flush()
 
     def get_logs(self):
         """Get all logs as a single string."""
