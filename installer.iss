@@ -1,6 +1,6 @@
 [Setup]
 AppName=Drifter Scanner
-AppVersion=0.1.0
+AppVersion=0.1.1
 AppPublisher=spapin
 AppPublisherURL=https://github.com/spapin/drifter_scanner
 DefaultDirName={autopf}\Drifter Scanner
